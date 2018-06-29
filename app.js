@@ -44,7 +44,7 @@ var redirectController = require('./controllers/RedirectController')(redis);
 //Initialize routes
 var admin = require('./routes/admin.js')(frontendController, apiController);
 app.use('/admin', admin);
-var main = require('./routes/main.js')(rootRedirect, redirectController);
+var main = require('./routes/main.js')(rootRedirect, frontendController, redirectController);
 app.use('/', main);
 app.use(function(req, res, next) {
   res.status(404).render('404');
