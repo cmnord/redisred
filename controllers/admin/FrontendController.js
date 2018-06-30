@@ -1,5 +1,5 @@
 var redirectModel = require('../../models/Redirect');
-module.exports = function(redis, passport) {
+module.exports = function(redis, passport, hostedDomain) {
   var Redirect = redirectModel(redis);
   var FrontendController = {};
 
@@ -18,8 +18,10 @@ module.exports = function(redis, passport) {
       res.render('admin/root');
   };
 
-  FrontendController.login = passport.authenticate('google',
-    { scope: ['profile'] }
+  FrontendController.login = passport.authenticate('google', {
+    scope: ['profile'],
+    hostedDomain: hostedDomain,
+  }
 );
 
   FrontendController.loginCallback = passport.authenticate('google',

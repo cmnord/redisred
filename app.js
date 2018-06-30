@@ -8,6 +8,7 @@ var clientId = process.env.OAUTH2_PROXY_CLIENT_ID || 'we need a client id';
 var clientSecret = process.env.OAUTH2_PROXY_CLIENT_SECRET || 'and a client secret too';
 var rootRedirect = process.env.ROOT_REDIRECT || 'https://google.com';
 var apiToken = process.env.API_TOKEN || '1234567890abcdefghijklmnopqrstuvwxyz';
+var hostedDomain = process.env.HOSTED_DOMAIN || 'example.com';
 
 //Includes
 var authentication = require('./authentication');
@@ -37,7 +38,7 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 //Initialize controllers
-var frontendController = require('./controllers/admin/FrontendController')(redis, passport);
+var frontendController = require('./controllers/admin/FrontendController')(redis, passport, hostedDomain);
 var apiController = require('./controllers/admin/APIController')(redis, apiToken);
 var redirectController = require('./controllers/RedirectController')(redis);
 
