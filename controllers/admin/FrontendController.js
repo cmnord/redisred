@@ -8,6 +8,7 @@ module.exports = function(redis, passport) {
     if (req.isAuthenticated())
       return next();
     else
+      req.session.returnTo = req.originalUrl;
       res.redirect('/admin');
   };
 
@@ -22,10 +23,17 @@ module.exports = function(redis, passport) {
     { scope: ['profile'] }
 );
 
-  FrontendController.loginCallback = passport.authenticate('google',
-    { successRedirect: '/admin/redirects',
-      failureRedirect: '/admin#incorrect' }
-  );
+  FrontendController.loginCallback = function(req, res) {
+    returnTo = '/admin/redirects'
+    if (req.session.returnTo) {
+      returnTo = req.session.returnTo;
+      delete req.session.returnTo;
+    }
+    passport.authenticate('google', {
+      successRedirect: returnTo,
+      failureRedirect: '/admin#incorrect'
+    })(req, res);
+  };
 
   FrontendController.logout = function(req, res) {
     req.session.destroy(function () {
