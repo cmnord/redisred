@@ -9,6 +9,6 @@ html
       div.content
         form(action="/admin/login", method="POST")
           button.btn.btn-danger.btn-block Log in with Google
-          #alert.alert.alert-danger(style="margin-top: 10px; display: none;") Wrong username or password.
+          #alert.alert.alert-danger(style="margin-top: 10px; display: none;") User does not have access.
           script if (window.location.hash.length) document.getElementById("alert").style.display = "block";
 

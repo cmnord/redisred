@@ -8,6 +8,9 @@ var clientId = process.env.OAUTH2_PROXY_CLIENT_ID || 'we need a client id';
 var clientSecret = process.env.OAUTH2_PROXY_CLIENT_SECRET || 'and a client secret too';
 var rootRedirect = process.env.ROOT_REDIRECT || 'https://google.com';
 var apiToken = process.env.API_TOKEN || '1234567890abcdefghijklmnopqrstuvwxyz';
+var allowedUsers = process.env.ALLOWED_USERS
+  ? process.env.ALLOWED_USERS.split(",")
+  : undefined;
 
 //Includes
 var authentication = require('./authentication');
@@ -20,7 +23,7 @@ var favicon = require('serve-favicon');
 var RedisStore = require('connect-redis')(expressSession);
 
 //Initialize auth
-authentication(passport, clientId, clientSecret);
+authentication(passport, clientId, clientSecret, allowedUsers);
 
 //Connect to Redis
 var redis = new Redis(redisUrl);
