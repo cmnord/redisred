@@ -26,6 +26,9 @@
     "SESSION_SECRET": {
       "description": "A secret key for verifying the integrity of signed cookies.",
       "generator": "secret"
+    },
+    "ALLOWED_USERS": {
+      "description": "The Google Plus IDs of users you want to allow to log in."
     }
   },
   "addons": [
