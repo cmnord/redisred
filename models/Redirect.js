@@ -1,5 +1,5 @@
-var urlKeyPrefix = "url_";
-var clicksKeyPrefix = "clicks_";
+var urlKeyPrefix = 'url_';
+var clicksKeyPrefix = 'clicks_';
 
 var createResponseObject = function(key, url, clicks) {
   return {
@@ -14,8 +14,7 @@ var redisResponseToObject = function(key, a, b) {
   resultClicks = b[1];
   if (resultUrl && resultClicks)
     return createResponseObject(key, resultUrl, resultClicks);
-  else
-    return false;
+  else return false;
 };
 
 var baseKey = function(key, prefix) {
@@ -26,23 +25,22 @@ module.exports = function(redis) {
   var Redirect = {};
 
   Redirect.get = function(key, callback) {
-    key = decodeURIComponent(key.toLowerCase()).replace(/[^a-z0-9_]/g,'-');
+    key = decodeURIComponent(key.toLowerCase()).replace(/[^a-z0-9_]/g, '-');
     redis.multi({ pipeline: false });
-    redis.get(urlKeyPrefix+key);
-    redis.get(clicksKeyPrefix+key);
-    redis.incr(clicksKeyPrefix+key);
+    redis.get(urlKeyPrefix + key);
+    redis.get(clicksKeyPrefix + key);
+    redis.incr(clicksKeyPrefix + key);
     redis.exec(function(err, result) {
-      if (err)
-        return callback(err);
+      if (err) return callback(err);
       callback(false, redisResponseToObject(key, result[0], result[1]));
     });
   };
 
   Redirect.create = function(key, url, callback) {
-    key = decodeURIComponent(key.toLowerCase()).replace(/[^a-z0-9_]/g,'-');
+    key = decodeURIComponent(key.toLowerCase()).replace(/[^a-z0-9_]/g, '-');
     redis.multi({ pipeline: false });
-    redis.set(urlKeyPrefix+key, url);
-    redis.set(clicksKeyPrefix+key, 0);
+    redis.set(urlKeyPrefix + key, url);
+    redis.set(clicksKeyPrefix + key, 0);
     redis.exec(function(err, result) {
       if (err) {
         callback(err);
@@ -53,8 +51,8 @@ module.exports = function(redis) {
   };
 
   Redirect.delete = function(key, callback) {
-    key = decodeURIComponent(key.toLowerCase()).replace(/[^a-z0-9_]/g,'-');
-    redis.del(urlKeyPrefix+key, clicksKeyPrefix+key, function(err, result) {
+    key = decodeURIComponent(key.toLowerCase()).replace(/[^a-z0-9_]/g, '-');
+    redis.del(urlKeyPrefix + key, clicksKeyPrefix + key, function(err, result) {
       if (err) {
         callback(err);
         return;
@@ -64,14 +62,13 @@ module.exports = function(redis) {
   };
 
   Redirect.getAll = function(callback) {
-    redis.keys(urlKeyPrefix+"*", function(keysError, keys) {
-      if (keysError)
-        return callback(keysError);
+    redis.keys(urlKeyPrefix + '*', function(keysError, keys) {
+      if (keysError) return callback(keysError);
       redis.multi({ pipeline: false });
       keys.forEach(function(element) {
         var key = baseKey(element, urlKeyPrefix);
-        redis.get(urlKeyPrefix+key);
-        redis.get(clicksKeyPrefix+key);
+        redis.get(urlKeyPrefix + key);
+        redis.get(clicksKeyPrefix + key);
       });
       redis.exec(function(err, results) {
         if (err) {
@@ -81,9 +78,11 @@ module.exports = function(redis) {
         var resultArray = [];
         for (var i = 0; i < keys.length; i++) {
           var key = baseKey(keys[i], urlKeyPrefix);
-          resultArray.push(redisResponseToObject(key, results[2*i], results[2*i+1]));
+          resultArray.push(
+            redisResponseToObject(key, results[2 * i], results[2 * i + 1])
+          );
         }
-        resultArray.sort(function(a,b){
+        resultArray.sort(function(a, b) {
           return a.key.localeCompare(b.key);
         });
         callback(false, resultArray);
