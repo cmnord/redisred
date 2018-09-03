@@ -5,11 +5,12 @@ var port = process.env.PORT || 3000;
 var redisUrl = process.env.REDIS_URL || 'redis://127.0.0.1:6379/0';
 var sessionSecret = process.env.SESSION_SECRET || 'this is really secure';
 var clientId = process.env.OAUTH2_PROXY_CLIENT_ID || 'we need a client id';
-var clientSecret = process.env.OAUTH2_PROXY_CLIENT_SECRET || 'and a client secret too';
+var clientSecret =
+  process.env.OAUTH2_PROXY_CLIENT_SECRET || 'and a client secret too';
 var rootRedirect = process.env.ROOT_REDIRECT || 'https://google.com';
 var apiToken = process.env.API_TOKEN || '1234567890abcdefghijklmnopqrstuvwxyz';
 var allowedUsers = process.env.ALLOWED_USERS
-  ? process.env.ALLOWED_USERS.split(",")
+  ? process.env.ALLOWED_USERS.split(',')
   : undefined;
 
 //Includes
@@ -30,18 +31,31 @@ var redis = new Redis(redisUrl);
 
 //Initialize the app
 var app = express();
-var redisSessionStore = new RedisStore({client: redis});
+var redisSessionStore = new RedisStore({ client: redis });
 app.set('views', './views');
 app.set('view engine', 'jade');
 app.use(favicon('./public/assets/favicon.png'));
 app.use(cookieParser());
-app.use(expressSession({ store: redisSessionStore, secret: sessionSecret, resave: true, saveUninitialized: true }));
+app.use(
+  expressSession({
+    store: redisSessionStore,
+    secret: sessionSecret,
+    resave: true,
+    saveUninitialized: true
+  })
+);
 app.use(passport.initialize());
 app.use(passport.session());
 
 //Initialize controllers
-var frontendController = require('./controllers/admin/FrontendController')(redis, passport);
-var apiController = require('./controllers/admin/APIController')(redis, apiToken);
+var frontendController = require('./controllers/admin/FrontendController')(
+  redis,
+  passport
+);
+var apiController = require('./controllers/admin/APIController')(
+  redis,
+  apiToken
+);
 var redirectController = require('./controllers/RedirectController')(redis);
 
 //Initialize routes
@@ -55,10 +69,9 @@ app.use(function(req, res, next) {
 
 // Start the server
 console.log('Connecting to redis...');
-redis.ping(function(err){
+redis.ping(function(err) {
   if (!err) {
     console.log('Connection successful. Server listening on port ' + port);
     app.listen(port);
   }
 });
-

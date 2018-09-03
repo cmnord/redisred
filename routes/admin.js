@@ -3,7 +3,6 @@ var csrf = require('csurf');
 var bodyParser = require('body-parser');
 
 module.exports = function(frontend, api) {
-
   var apiRouter = express.Router();
   apiRouter.use(bodyParser.json());
   apiRouter.get('/', api.authenticate, api.getAllRedirects);
@@ -17,14 +16,29 @@ module.exports = function(frontend, api) {
   frontendRouter.post('/login', frontend.login);
   frontendRouter.get('/login/callback', frontend.loginCallback);
   frontendRouter.get('/logout', frontend.logout);
-  frontendRouter.get('/redirects', csrfProtection, frontend.authenticate, frontend.getAllRedirects);
-  frontendRouter.post('/redirect/create', csrfProtection, frontend.authenticate, frontend.createRedirect);
-  frontendRouter.post('/redirect/delete', csrfProtection, frontend.authenticate, frontend.deleteRedirect);
+  frontendRouter.get(
+    '/redirects',
+    csrfProtection,
+    frontend.authenticate,
+    frontend.getAllRedirects
+  );
+  frontendRouter.post(
+    '/redirect/create',
+    csrfProtection,
+    frontend.authenticate,
+    frontend.createRedirect
+  );
+  frontendRouter.post(
+    '/redirect/delete',
+    csrfProtection,
+    frontend.authenticate,
+    frontend.deleteRedirect
+  );
 
   var router = express.Router();
   router.use('/api', apiRouter);
   router.use('/', frontendRouter);
-  router.get('*',function(req, res) {
+  router.get('*', function(req, res) {
     res.redirect('/admin');
   });
 

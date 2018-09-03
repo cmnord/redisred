@@ -58,16 +58,15 @@ To deploy this to heroku, click this fancy button :)
 
 ## Environment variables.
 
-| Variable | Description |
-| -------- | ----------- |
-| PORT | The port this app should run on |
-| OAUTH2_PROXY_CLIENT_ID | The client ID of your Google app |
-| OAUTH2_PROXY_CLIENT_SECRET | The client secret of your Google app |
-| API_TOKEN | The token to be used on all API calls |
-| ROOT_REDIRECT | The URL the root of your website should redirect to |
-| SESSION_SECRET | A secret key for verifying the integrity of signed cookies |
-| ALLOWED_USERS | The Google Plus IDs of users you want to allow to log in |
-
+| Variable                   | Description                                                |
+| -------------------------- | ---------------------------------------------------------- |
+| PORT                       | The port this app should run on                            |
+| OAUTH2_PROXY_CLIENT_ID     | The client ID of your Google app                           |
+| OAUTH2_PROXY_CLIENT_SECRET | The client secret of your Google app                       |
+| API_TOKEN                  | The token to be used on all API calls                      |
+| ROOT_REDIRECT              | The URL the root of your website should redirect to        |
+| SESSION_SECRET             | A secret key for verifying the integrity of signed cookies |
+| ALLOWED_USERS              | The Google Plus IDs of users you want to allow to log in   |
 
 ## License
 
