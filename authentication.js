@@ -15,7 +15,13 @@ module.exports = function(passport, clientId, clientSecret) {
     clientSecret: clientSecret,
     callbackURL: "/admin/login/callback"
   },
-  function(accessToken, refreshToken, profile, done) {
+    function (accessToken, refreshToken, profile, done) {
+      if (
+        allowedUsers !== undefined &&
+        allowedUsers.indexOf(profile.id) == -1
+      ) {
+        return done(null, false);
+      }
       return done(null, profile);
-  }));
+    }));
 };
