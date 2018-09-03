@@ -2,7 +2,7 @@
 
 A small Redis-based URL Redirector
 
-[<img src="https://www.herokucdn.com/deploy/button.png">](https://www.heroku.com/deploy/?template=https://github.com/Detry322/redisred)
+[<img src="https://www.herokucdn.com/deploy/button.png">](https://www.heroku.com/deploy/?template=https://github.com/cmnord/redisred)
 
 ## Give it a test!
 
@@ -54,7 +54,7 @@ To stop the server, `Ctrl+C`, and then:
 
 To deploy this to heroku, click this fancy button :)
 
-[<img src="https://www.herokucdn.com/deploy/button.png">](https://www.heroku.com/deploy/?template=https://github.com/Detry322/redisred)
+[<img src="https://www.herokucdn.com/deploy/button.png">](https://www.heroku.com/deploy/?template=https://github.com/cmnord/redisred)
 
 ## Environment variables.
 
