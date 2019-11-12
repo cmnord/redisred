@@ -33,7 +33,7 @@ var redis = new Redis(redisUrl);
 var app = express();
 var redisSessionStore = new RedisStore({ client: redis });
 app.set('views', './views');
-app.set('view engine', 'jade');
+app.set('view engine', 'pug');
 app.use(favicon('./public/assets/favicon.png'));
 app.use(cookieParser());
 app.use(
