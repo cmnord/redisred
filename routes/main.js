@@ -1,8 +1,8 @@
-var express = require('express');
+const express = require('express');
 
-module.exports = function(rootRedirect, redirectController) {
-  var router = express.Router();
-  router.get('/', function(req, res) {
+module.exports = (rootRedirect, redirectController) => {
+  const router = express.Router();
+  router.get('/', (req, res) => {
     res.redirect(rootRedirect);
   });
   router.get('/:redirect_name', redirectController.redirect);

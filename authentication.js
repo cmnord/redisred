@@ -1,11 +1,11 @@
-var GoogleStrategy = require('passport-google-oauth20').Strategy;
+const GoogleStrategy = require('passport-google-oauth20').Strategy;
 
-module.exports = function(passport, clientId, clientSecret, allowedUsers) {
-  passport.serializeUser(function(username, done) {
+module.exports = (passport, clientId, clientSecret, allowedUsers) => {
+  passport.serializeUser((username, done) => {
     done(null, username);
   });
 
-  passport.deserializeUser(function(username, done) {
+  passport.deserializeUser((username, done) => {
     done(null, username);
   });
 
@@ -13,18 +13,18 @@ module.exports = function(passport, clientId, clientSecret, allowedUsers) {
     new GoogleStrategy(
       {
         clientID: clientId,
-        clientSecret: clientSecret,
-        callbackURL: '/admin/login/callback'
+        clientSecret,
+        callbackURL: '/admin/login/callback',
       },
-      function(accessToken, refreshToken, profile, done) {
+      ((accessToken, refreshToken, profile, done) => {
         if (
-          allowedUsers !== undefined &&
-          allowedUsers.indexOf(profile.id) == -1
+          allowedUsers !== undefined
+          && allowedUsers.indexOf(profile.id) === -1
         ) {
           return done(null, false);
         }
         return done(null, profile);
-      }
-    )
+      }),
+    ),
   );
 };

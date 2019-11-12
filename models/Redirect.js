@@ -1,47 +1,38 @@
-var urlKeyPrefix = 'url_';
-var clicksKeyPrefix = 'clicks_';
+const urlKeyPrefix = 'url_';
+const clicksKeyPrefix = 'clicks_';
 
-var createResponseObject = function(key, url, clicks) {
-  return {
-    key: key,
-    url: url,
-    clicks: clicks
-  };
+const createResponseObject = (key, url, clicks) => ({ key, url, clicks });
+
+const redisResponseToObject = (key, a, b) => {
+  const [, resultUrl] = a;
+  const [, resultClicks] = b;
+  if (resultUrl && resultClicks) return createResponseObject(key, resultUrl, resultClicks);
+  return false;
 };
 
-var redisResponseToObject = function(key, a, b) {
-  resultUrl = a[1];
-  resultClicks = b[1];
-  if (resultUrl && resultClicks)
-    return createResponseObject(key, resultUrl, resultClicks);
-  else return false;
-};
+const baseKey = (key, prefix) => key.substring(prefix.length);
 
-var baseKey = function(key, prefix) {
-  return key.substring(prefix.length);
-};
+module.exports = (redis) => {
+  const Redirect = {};
 
-module.exports = function(redis) {
-  var Redirect = {};
-
-  Redirect.get = function(key, callback) {
-    key = decodeURIComponent(key.toLowerCase()).replace(/[^a-z0-9_]/g, '-');
+  Redirect.get = (k, callback) => {
+    const key = decodeURIComponent(k.toLowerCase()).replace(/[^a-z0-9_]/g, '-');
     redis.multi({ pipeline: false });
     redis.get(urlKeyPrefix + key);
     redis.get(clicksKeyPrefix + key);
     redis.incr(clicksKeyPrefix + key);
-    redis.exec(function(err, result) {
+    redis.exec((err, result) => {
       if (err) return callback(err);
-      callback(false, redisResponseToObject(key, result[0], result[1]));
+      return callback(false, redisResponseToObject(key, result[0], result[1]));
     });
   };
 
-  Redirect.create = function(key, url, callback) {
-    key = decodeURIComponent(key.toLowerCase()).replace(/[^a-z0-9_]/g, '-');
+  Redirect.create = (k, url, callback) => {
+    const key = decodeURIComponent(k.toLowerCase()).replace(/[^a-z0-9_]/g, '-');
     redis.multi({ pipeline: false });
     redis.set(urlKeyPrefix + key, url);
     redis.set(clicksKeyPrefix + key, 0);
-    redis.exec(function(err, result) {
+    redis.exec((err) => {
       if (err) {
         callback(err);
         return;
@@ -50,9 +41,9 @@ module.exports = function(redis) {
     });
   };
 
-  Redirect.delete = function(key, callback) {
-    key = decodeURIComponent(key.toLowerCase()).replace(/[^a-z0-9_]/g, '-');
-    redis.del(urlKeyPrefix + key, clicksKeyPrefix + key, function(err, result) {
+  Redirect.delete = (k, callback) => {
+    const key = decodeURIComponent(k.toLowerCase()).replace(/[^a-z0-9_]/g, '-');
+    redis.del(urlKeyPrefix + key, clicksKeyPrefix + key, (err) => {
       if (err) {
         callback(err);
         return;
@@ -61,30 +52,28 @@ module.exports = function(redis) {
     });
   };
 
-  Redirect.getAll = function(callback) {
-    redis.keys(urlKeyPrefix + '*', function(keysError, keys) {
+  Redirect.getAll = (callback) => {
+    redis.keys(`${urlKeyPrefix}*`, (keysError, keys) => {
       if (keysError) return callback(keysError);
       redis.multi({ pipeline: false });
-      keys.forEach(function(element) {
-        var key = baseKey(element, urlKeyPrefix);
+      keys.forEach((element) => {
+        const key = baseKey(element, urlKeyPrefix);
         redis.get(urlKeyPrefix + key);
         redis.get(clicksKeyPrefix + key);
       });
-      redis.exec(function(err, results) {
+      return redis.exec((err, results) => {
         if (err) {
           callback(err);
           return;
         }
-        var resultArray = [];
-        for (var i = 0; i < keys.length; i++) {
-          var key = baseKey(keys[i], urlKeyPrefix);
+        const resultArray = [];
+        for (let i = 0; i < keys.length; i += 1) {
+          const key = baseKey(keys[i], urlKeyPrefix);
           resultArray.push(
-            redisResponseToObject(key, results[2 * i], results[2 * i + 1])
+            redisResponseToObject(key, results[2 * i], results[2 * i + 1]),
           );
         }
-        resultArray.sort(function(a, b) {
-          return a.key.localeCompare(b.key);
-        });
+        resultArray.sort((a, b) => a.key.localeCompare(b.key));
         callback(false, resultArray);
       });
     });

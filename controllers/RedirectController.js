@@ -1,11 +1,12 @@
-var redirectModel = require('../models/Redirect');
-module.exports = function(redis) {
-  var Redirect = redirectModel(redis);
-  var RedirectController = {};
+const redirectModel = require('../models/Redirect');
 
-  RedirectController.redirect = function(req, res) {
-    var redirectName = req.params.redirect_name;
-    Redirect.get(redirectName, function(err, redirect) {
+module.exports = (redis) => {
+  const Redirect = redirectModel(redis);
+  const RedirectController = {};
+
+  RedirectController.redirect = (req, res) => {
+    const redirectName = req.params.redirect_name;
+    Redirect.get(redirectName, (err, redirect) => {
       if (err) res.status(500).send(err);
       else if (!redirect) res.status(404).render('404');
       else res.redirect(redirect.url);

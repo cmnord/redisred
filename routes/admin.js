@@ -1,16 +1,16 @@
-var express = require('express');
-var csrf = require('csurf');
-var bodyParser = require('body-parser');
+const express = require('express');
+const csrf = require('csurf');
+const bodyParser = require('body-parser');
 
-module.exports = function(frontend, api) {
-  var apiRouter = express.Router();
+module.exports = (frontend, api) => {
+  const apiRouter = express.Router();
   apiRouter.use(bodyParser.json());
   apiRouter.get('/', api.authenticate, api.getAllRedirects);
   apiRouter.post('/create', api.authenticate, api.createRedirect);
   apiRouter.post('/delete', api.authenticate, api.deleteRedirect);
 
-  var csrfProtection = csrf({ cookie: true });
-  var frontendRouter = express.Router();
+  const csrfProtection = csrf({ cookie: true });
+  const frontendRouter = express.Router();
   frontendRouter.use(bodyParser.urlencoded({ extended: false }));
   frontendRouter.get('/', frontend.showLogin);
   frontendRouter.post('/login', frontend.login);
@@ -20,25 +20,25 @@ module.exports = function(frontend, api) {
     '/redirects',
     csrfProtection,
     frontend.authenticate,
-    frontend.getAllRedirects
+    frontend.getAllRedirects,
   );
   frontendRouter.post(
     '/redirect/create',
     csrfProtection,
     frontend.authenticate,
-    frontend.createRedirect
+    frontend.createRedirect,
   );
   frontendRouter.post(
     '/redirect/delete',
     csrfProtection,
     frontend.authenticate,
-    frontend.deleteRedirect
+    frontend.deleteRedirect,
   );
 
-  var router = express.Router();
+  const router = express.Router();
   router.use('/api', apiRouter);
   router.use('/', frontendRouter);
-  router.get('*', function(req, res) {
+  router.get('*', (req, res) => {
     res.redirect('/admin');
   });
 
